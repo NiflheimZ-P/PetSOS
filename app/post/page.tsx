@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 
@@ -5,9 +6,89 @@ import React from 'react';
 // แต่เพื่อให้โค้ดนี้ทำงานได้ ฉันจะใช้คลาส Tailwind ตามที่คุณกำหนด
 
 // หากคุณใช้ Next.js App Router (มาตรฐานปัจจุบัน) ไฟล์นี้คือ page.tsx
+import dynamic from "next/dynamic";
+import type { LeafletMapProps } from "./LeafletMap";
+
+const LeafletMap = dynamic<LeafletMapProps>(
+  () => import("./LeafletMap"),
+  { ssr: false }
+);
+
+import { useState, useRef, useEffect } from "react";
+
+type Post = {
+  id: number;
+  title: string;
+  status: string;
+  detail?: string;
+};
 
 export default function CreatePostPage() {
 
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  async function myPost() {
+    const owner = '77ccabdf-24c3-49e0-a7f9-0c67d289639c';
+    const res = await fetch(`/api/posts?post_owner=${encodeURIComponent(owner)}`, {
+      method: 'GET',
+      // ห้ามใส่ body!
+      cache: 'no-store', // ถ้าอยากกัน cache ขณะ dev
+    });
+    if (!res.ok) throw new Error('Failed to fetch posts');
+    const data = await res.json();
+    setPosts(data);
+    console.log(data);
+  }
+
+
+  useEffect(() => {
+    myPost()
+  }, []);
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setPreviewUrl(null);
+      return;
+    }
+    // สร้าง URL สำหรับพรีวิว
+    const nextUrl = URL.createObjectURL(file);
+    // เคลียร์ของเก่าป้องกัน memory leak
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(nextUrl);
+  }
+
+  const formRef = useRef<HTMLFormElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!formRef.current) return;
+
+    try {
+      const formData = new FormData(formRef.current);
+      // inject ค่าจากแผนที่
+      if (lat !== null) formData.set("lat", String(lat));
+      if (lng !== null) formData.set("lng", String(lng));
+
+      // ส่ง formData ตรงๆ (อย่าตั้ง Content-Type เอง)
+      const res = await fetch("/api/posts", { method: "POST", body: formData });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(`Save failed: ${err?.error || res.statusText}`);
+        return;
+      }
+
+      const data = await res.json();
+      alert("Saved! id = " + data.post_id);
+      formRef.current.reset();
+    } catch (error) {
+      alert("Error: " + (error as Error).message);
+    }
+  }
 
   // จำลองข้อมูลสำหรับรูปภาพและตาราง
   const recentPosts = [
@@ -31,7 +112,7 @@ export default function CreatePostPage() {
               <span>New Post</span>
             </a>
             <a className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20" href="#">
-              <span className="material-symbols-outlined"> description </span>
+              <span className="material-symbols-outlined"> detail </span>
               <span>My Posts</span>
             </a>
             <a className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20" href="#">
@@ -50,68 +131,109 @@ export default function CreatePostPage() {
           {/* Main Content */}
           <main className="flex-1 overflow-y-auto p-8">
             <div className="max-w-4xl mx-auto">
-              
               {/* Form Section: Create New Post */}
               <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Create a New Post</h2>
               <div className="space-y-8">
-                
-                {/* Title Input */}
-                <div>
-                  <label className="block text-lg font-medium mb-2 text-gray-900 dark:text-white" htmlFor="title">Title</label>
-                  <input 
-                    className="w-full p-4 rounded-lg bg-background-light dark:bg-background-dark border border-primary/20 dark:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/50" 
-                    id="title" 
-                    placeholder="e.g., Lost Golden Retriever in Central Park" 
-                    type="text" 
-                  />
-                </div>
-                
-                {/* Upload Photos Grid */}
-                <div>
-                  <p className="block text-lg font-medium mb-2 text-gray-900 dark:text-white">Upload Photos</p>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="col-span-2 row-span-2 rounded-lg overflow-hidden">
-                      <div className="w-full h-full bg-center bg-no-repeat bg-cover aspect-square" style={{ backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuA7PFHgR9Bl4yW1vDyMNb2gCVnObFS05MZgxRWczBwrKdJZCPUviwsgoSN4AmMkPvYg72Ap52BFseNU0B5C1esjIszxKZMUwrn-4RPbSA1b9DOzmgZ4fu-ETZOE9P5XB_IiCewF2qhkZPmtwWI1tzqBuqYZNii1T6AzbL_RSppof4XKqpCwRpoI_3POKZHv8uZKVK4LAZ8g3YFJn0LvOmv5RKS0-izbgR2EfjdxCwKpQP_JcKpKruoO2mVOEMUdIh1zK7FmkAmNtQWe")` }}></div>
+                <form ref={formRef} onSubmit={onSubmit}>
+
+                  {/* Upload Photos */}
+                  <div>
+                    <p className="block text-lg font-medium mb-2 text-gray-900 dark:text-white">
+                      Upload Photo
+                    </p>
+
+                    <div className="flex items-center justify-center w-full">
+                      <label
+                        htmlFor="image"
+                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                      >
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                          </svg>
+                          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                            <span className="font-semibold">Click to upload</span> or drag and drop
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF, WEBP (max 10MB)</p>
+                        </div>
+                        {/* สำคัญ: ต้องมี name="image" เพื่อให้ API รับไฟล์ได้ */}
+                        <input
+                          id="image"
+                          name="image"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleFileChange}
+                          ref={fileRef}
+                        />
+                      </label>
                     </div>
-                    <div className="rounded-lg overflow-hidden">
-                      <div className="w-full h-full bg-center bg-no-repeat bg-cover aspect-square" style={{ backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuB9OGZfZFgQRjZwCqSVC2uI4wc3vAfpjxV6WksS3ZhzCmt1mcDlUtfcCWOLe97icEw60g2Gr3OWHM8ljIWkAK4ifpNSWe_TJiwSmZ_nB1XYWsnYglKErCeZoKgopgpdOMNaQIgrsVbY3c0n03HlsvaJ8kijuAYLOPMbUYAwFIkhE8ML-BhJ8_RuadyBlTM6gwJruIe_KEKh3eEdvK1rDLmFYBr61F_w6s8sMFiOqLPxTbIGCsXXTsUkQNghoOJYXYtlvcr3TtvtjQzJ")` }}></div>
+
+                    {/* Preview */}
+                    {previewUrl && (
+                      <div className="mt-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-gray-600 dark:text-gray-300">Preview</span>
+                          <button
+                            type="button"
+                            className="text-sm text-red-600 hover:underline"
+                            onClick={() => {
+                              if (previewUrl) URL.revokeObjectURL(previewUrl);
+                              setPreviewUrl(null);
+                              if (fileRef.current) fileRef.current.value = "";
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <div className="w-full h-full overflow-hidden rounded-lg border flex justify-center">
+                          <img
+                            src={previewUrl}
+                            alt="preview"
+                            className="w-100 h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  
+                  {/* Detail Textarea */}
+                  <div>
+                    <label className="block text-lg font-medium mb-2 text-gray-900 dark:text-white" htmlFor="detail">Detail</label>
+                    <textarea 
+                      className="w-full p-4 rounded-lg bg-background-light dark:bg-background-dark border border-primary/20 dark:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/50" 
+                      id="detail" 
+                      name="detail"
+                      placeholder="Describe the animal, where it was last seen, and any other relevant details like collar, tags, or behavior." 
+                      rows={6}
+                    ></textarea>
+                  </div>
+                  
+                  {/* Location Input and Map */}
+                  <div>
+                    <label className="block text-lg font-medium mb-2 text-gray-900 dark:text-white" htmlFor="location">Location</label>
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">  </span>
                     </div>
-                    <div className="rounded-lg overflow-hidden">
-                      <div className="w-full h-full bg-center bg-no-repeat bg-cover aspect-square" style={{ backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuBWz8r1iSu6zOVU0JW57wDN0WJLx2X21FXAbBoK_qbaZNVvhjFdbpI2BTblpudnr25L0pen_ixpXhCzezRAVPiBv99D8vlw-57osAkZbFltPMTNOEjxU_9AtPyDAdwa073WDK41U4osO2H0f7yqnALix61UyGbWduEU5PSxi8qQrJ-Y0ApwcUjOaAVItZytaA-VkM9gX5qRDMxH-7JfRGD82qJG3u0kGlZ0ReZ3cCM5fd2Gi3p2AuRNqT22G2VIM2pc4_UCcG9phj3I")` }}></div>
+                    <div className="mt-4 w-full h-80">
+                      <LeafletMap
+                        onSelect={({ lat, lng }) => {
+                          setLat(lat);
+                          setLng(lng);
+                        }}
+                        // defaultCenter={{ lat: 13.7563, lng: 100.5018 }} // ปรับค่าเริ่มต้นได้
+                      />
                     </div>
                   </div>
-                </div>
-                
-                {/* Description Textarea */}
-                <div>
-                  <label className="block text-lg font-medium mb-2 text-gray-900 dark:text-white" htmlFor="description">Description</label>
-                  <textarea 
-                    className="w-full p-4 rounded-lg bg-background-light dark:bg-background-dark border border-primary/20 dark:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/50" 
-                    id="description" 
-                    placeholder="Describe the animal, where it was last seen, and any other relevant details like collar, tags, or behavior." 
-                    rows={6}
-                  ></textarea>
-                </div>
-                
-                {/* Location Input and Map */}
-                <div>
-                  <label className="block text-lg font-medium mb-2 text-gray-900 dark:text-white" htmlFor="location">Location</label>
-                  <div className="relative">
-                    <input 
-                      className="w-full p-4 pl-12 rounded-lg bg-background-light dark:bg-background-dark border border-primary/20 dark:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/50" 
-                      id="location" 
-                      placeholder="Enter last known location or drop a pin on the map" 
-                      type="text" 
-                    />
-                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">  </span>
+                  
+                  {/* Post Button */}
+                  <div className="flex justify-end pt-4">
+                    <button type='submit' className="px-8 py-3 rounded-lg bg-blue-700 text-white font-bold text-lg hover:opacity-90 transition-opacity">Post</button>
                   </div>
-                  <div className="mt-4 w-full h-80 bg-center bg-no-repeat bg-cover rounded-xl" style={{ backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuCShNP8sJXrFWsxh5N-oDQZYZp9uZAu9stsZ9AzJxHeKTJnMFi2xS8jalfhURJL5uB7cKI23DdEmBnaCg_eiuMw8uExl-ExisTCkJyDs7HR3qfRvlTeRT1cLLgknn8fJVYdyqi37McIxj6_U0QzEP3gqL2EkK3pyfJoaNExVdCkYeK-6ZkLYaOa4SBcLc2n-8kd0ujLAbwK6kLaqwhI4LtDU5HOHO0GixYSLgl2JEPwx-b-8yqXTfcWKdKAbTJcPy8ug1IXtl6eRHoY")` }}></div>
-                </div>
+                </form>
                 
-                {/* Post Button */}
-                <div className="flex justify-end pt-4">
-                  <button className="px-8 py-3 rounded-lg bg-primary text-black font-bold text-lg hover:opacity-90 transition-opacity">Post</button>
-                </div>
               </div>
 
               {/* Table Section: My Recent Posts */}
@@ -127,11 +249,11 @@ export default function CreatePostPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {recentPosts.map((post, index) => (
-                        <tr key={index} className={index < recentPosts.length - 1 ? "border-b border-primary/10 dark:border-primary/20" : ""}>
-                          <td className="p-4 font-medium text-gray-800 dark:text-gray-200">{post.title}</td>
+                      {posts.map((post, index) => (
+                        <tr key={index} className={index < posts.length - 1 ? "border-b border-primary/10 dark:border-primary/20" : ""}>
+                          <td className="p-4 font-medium text-gray-800 dark:text-gray-200">{post.detail}</td>
                           <td className="p-4">
-                            <span className={`inline-block px-3 py-1 text-sm font-semibold rounded-full ${post.bgColor} ${post.statusColor}`}>{post.status}</span>
+                            <span className={`inline-block px-3 py-1 text-sm font-semibold rounded-full`}>{post.status}</span>
                           </td>
                           <td className="p-4 text-right">
                             <a className="font-bold text-primary hover:underline" href="#">Update Status</a>

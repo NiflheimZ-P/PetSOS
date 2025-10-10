@@ -46,7 +46,8 @@ model posts {
   detail String?
   image_url String?
   status String?
-  location String?
+  lat Float?
+  lng Float?
   created_at DateTime @default(now())
 
   owner users @relation(fields: [post_owner], references: [user_id])
