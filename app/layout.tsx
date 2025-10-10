@@ -3,6 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
+import SessionProvider from "./components/SessionProvider";
+import { getServerSession } from 'next-auth';
+import { Toaster } from "@/components/ui/sonner";
+import { authOptions } from "@/lib/auth";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -17,11 +21,12 @@ export const metadata: Metadata = {
   title: "PetSos",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
   return (
     <html lang="en">
 
@@ -31,7 +36,11 @@ export default function RootLayout({
         <header>
           <Navbar />
         </header>
-        {children}
+        <SessionProvider session={session}>
+          {children}
+        </SessionProvider>
+        <Toaster position="top-right" />
+        
 
       </body>
     </html>

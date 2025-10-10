@@ -1,5 +1,5 @@
 'use client'
-import React from "react";
+import React,{ChangeEvent, useState} from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,11 +14,29 @@ import RegisterTabs from "@/components/Auth/AuthTabs/RegisterTabs";
 import LoginTabs from "@/components/Auth/AuthTabs/LoginTabs";
 
 const AuthCard = () => {
+  const [register, setRegister] = useState({
+    first_name: "",
+    last_name: "",
+    username:"",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+  const [login, setLogin] = useState({
+    email:"",
+    password:""
+  })
+  const handleRegisterChange = (e:ChangeEvent<HTMLInputElement>) =>{
+    setRegister({...register, [e.target.name]: e.target.value})
+  }
+  const handleLoginChange = (e:ChangeEvent<HTMLInputElement>) => {
+    setLogin({...login, [e.target.name]: e.target.value})
+  }
   return (
-    <Card className=" w-full max-w-2xl bg-white rounded-[1rem] flex items-center min-h-[540px]">
+    <Card className=" w-full max-w-lg bg-white rounded-[1rem] flex items-center min-h-[540px]">
       <CardHeader className="w-full text-center  ">
-        <div className="w-fit bg-[var(--primary-color)] rounded-full p-5 mx-auto ">
-        </div>
+        {/* <div className="w-fit bg-[var(--primary-color)] rounded-full p-5 mx-auto ">
+        </div> */}
         <div className="space-y-5">
           <CardTitle className="font-extrabold text-4xl text-[#000000]">
             <div className="flex items-center gap-2 justify-center">
@@ -56,8 +74,8 @@ const AuthCard = () => {
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="register">Register</TabsTrigger>
           </TabsList>
-          <LoginTabs />
-          <RegisterTabs />
+          <LoginTabs login={login} setLogin={setLogin} handleLoginChange={handleLoginChange} />
+          <RegisterTabs register={register} setRegister={setRegister} handleRegisterChange={handleRegisterChange} />
         </Tabs>
       </CardContent>
     </Card>
