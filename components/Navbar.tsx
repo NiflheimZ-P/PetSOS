@@ -2,7 +2,14 @@ import Link from "next/link"
 import { Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 export function Navbar() {
   return (
     <header className="sticky top-0 z-10 w-full border-b border-border bg-background/80 backdrop-blur-sm">
@@ -51,7 +58,7 @@ export function Navbar() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-4">
             {/* ปุ่มแจ้งเตือน */}
-            <Link href="/profile/notification"> 
+            <Link href="/profile/notification">
               <Button
                 variant="ghost"
                 className="relative p-2 hover:bg-primary/10 rounded-full"
@@ -65,15 +72,35 @@ export function Navbar() {
               </Button>
             </Link>
           </div>
-            <Link href="/profile"> 
-              <Avatar className="cursor-pointer hover:opacity-80 transition">
-                <AvatarImage
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1dh9E62x3If0tvhUQrRuXRHVhGTpMUMgNGQgSrFIo_lJB2opmFL1nhE8ajHpvC2InQ0GdUbr8US8IOEUvmSeSe1QK3AFNn99NSY6zEqVipXIjS9WjbBPug5eWDJITSNZihol7Hp_oNDO0PRwMdV3yNC60S7yeiaiEJMEDmb040R1TumntnIgs8m9fJlo6dtqC_39koUAzY94ZfydJWv46zZiUasDFR0ZLOOBrvsFq8D1LrCBr759isyX8HvOd98EfUUm86pDmQltT"
-                  alt="User avatar"
-                />
-                <AvatarFallback>U</AvatarFallback>
-              </Avatar>
-            </Link>
+
+          <DropdownMenu>
+            {/* trigger */}
+            <DropdownMenuTrigger>
+              <Link href="/profile">
+                <Avatar className="cursor-pointer hover:opacity-80 transition">
+                  <AvatarImage
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1dh9E62x3If0tvhUQrRuXRHVhGTpMUMgNGQgSrFIo_lJB2opmFL1nhE8ajHpvC2InQ0GdUbr8US8IOEUvmSeSe1QK3AFNn99NSY6zEqVipXIjS9WjbBPug5eWDJITSNZihol7Hp_oNDO0PRwMdV3yNC60S7yeiaiEJMEDmb040R1TumntnIgs8m9fJlo6dtqC_39koUAzY94ZfydJWv46zZiUasDFR0ZLOOBrvsFq8D1LrCBr759isyX8HvOd98EfUUm86pDmQltT"
+                    alt="User avatar"
+                  />
+                  <AvatarFallback>U</AvatarFallback>
+                </Avatar>
+              </Link>
+            </DropdownMenuTrigger>
+            {/* dropdown list */}
+            <DropdownMenuContent>
+              <DropdownMenuLabel>User Menu</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link href="/profile">Profile</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/profile/notification">Notifications</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/api/auth/">Log Out</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
