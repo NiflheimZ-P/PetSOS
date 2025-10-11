@@ -11,10 +11,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await prisma.users.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       select: {
-        user_id: true,
+        id: true,
         first_name: true,
         last_name: true,
         email: true,
@@ -49,7 +49,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    const updatedUser = await prisma.users.update({
+    const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
       data: {
         first_name,
@@ -57,7 +57,7 @@ export async function PUT(req: Request) {
         email,
       },
       select: {
-        user_id: true,
+        id: true,
         first_name: true,
         last_name: true,
         email: true,

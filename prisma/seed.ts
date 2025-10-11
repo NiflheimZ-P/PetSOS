@@ -1,4 +1,7 @@
-const { PrismaClient, Role, PostType } = require("../lib/generated/prisma");
+const { PrismaClient } = require("../lib/generated/prisma");
+const prismaLib = require("../lib/generated/prisma");
+const Role = prismaLib.Role;
+const PostType = prismaLib.PostType;
 
 const prisma = new PrismaClient();
 
@@ -46,7 +49,6 @@ async function main() {
       type: PostType.TEXT,
       detail: "Hello everyone! My first post 🚀",
       status: "public",
-      location: "Bangkok",
     },
   });
 
@@ -57,7 +59,6 @@ async function main() {
       detail: "Beautiful sunset today 🌅",
       image_url: "https://example.com/sunset.jpg",
       status: "public",
-      location: "Chiang Mai",
     },
   });
 
