@@ -54,6 +54,7 @@ export const authOptions: NextAuthOptions = {
           first_name: firstName || null,
           last_name: lastName || null,
           email: profile.email,
+          password: null,
         };
       },
     }),

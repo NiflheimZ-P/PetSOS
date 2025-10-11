@@ -16,7 +16,7 @@ export async function GET(request: Request) {
           },
         },
         { detail: { contains: query, mode: "insensitive" } },
-        { location: { contains: query, mode: "insensitive" } },
+        // { location: { contains: query, mode: "insensitive" } },
       ],
     },
     include: {owner: { select: { username: true } },},
