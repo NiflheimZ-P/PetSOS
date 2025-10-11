@@ -25,20 +25,42 @@ enum PostType {
   VIDEO
 }
 
-model users {
-  user_id String @id @default(uuid())
+model User {
+  id String @id @default(uuid())
   first_name String? 
   last_name String?
-  username String @unique
+  username String? @unique
   email String @unique
-  password String
-  role Role
+  password String?
+  role Role @default(USER)
   created_at DateTime @default(now())
+  emailVerified DateTime?
 
   posts posts[]
   posts_comments post_comments[] @relation("UserComments")
+
+  
+  accounts Account[]
 }
 
+model Account {
+  id String @id @default(cuid())
+  userId String
+  type  String
+  provider  String
+  providerAccountId  String
+  refresh_token String? @db.Text
+  access_token  String? @db.Text
+  expires_at Int?
+  token_type  String?
+  scope String?
+  id_token  String? @db.Text
+  session_state String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider,providerAccountId])
+}
 model posts {
   post_id String @id @default(uuid())
   post_owner String
@@ -50,7 +72,7 @@ model posts {
   lng Float?
   created_at DateTime @default(now())
 
-  owner users @relation(fields: [post_owner], references: [user_id])
+  owner User @relation(fields: [post_owner], references: [id])
   comments post_comments[]
 }
 
@@ -62,6 +84,6 @@ model post_comments {
   image_url String?
   created_at DateTime @default(now())
 
-  owner users @relation("UserComments", fields: [comment_owner], references: [user_id])
+  owner User @relation("UserComments", fields: [comment_owner], references: [id])
   post posts @relation(fields: [post_id], references: [post_id])
 }

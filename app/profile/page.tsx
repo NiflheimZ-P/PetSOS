@@ -1,6 +1,8 @@
 import ProfileLayout from "@/components/ProfileLayout";
 
+
 export default function ProfilePage() {
+
   return (
     <ProfileLayout>
       <div className="max-w-4xl mx-auto">
