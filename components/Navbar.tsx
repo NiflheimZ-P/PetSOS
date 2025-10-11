@@ -97,7 +97,7 @@ export function Navbar() {
                 <Link href="/profile/notification">Notifications</Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link href="/api/auth/">Log Out</Link>
+                
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
