@@ -16,6 +16,7 @@ type LoginTabsProps = {
   handleLoginChange: (e: ChangeEvent<HTMLInputElement>) => void;
   setLogin:React.Dispatch<React.SetStateAction<LoginState>>;
 }
+
 const LoginTabs = ({login,handleLoginChange}:LoginTabsProps )=> {
   const router = useRouter();
   const check = async(e:any) =>{
@@ -80,7 +81,7 @@ const LoginTabs = ({login,handleLoginChange}:LoginTabsProps )=> {
         <Button className="w-full" onClick={check} >Login</Button>
       </form>
       <br />
-      <GoogleSignIn />
+      <GoogleSignIn onClick={()=> signIn("google",{callbackUrl:"/"})} />
     </TabsContent>
   );
 };
