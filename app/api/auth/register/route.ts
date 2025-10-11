@@ -5,16 +5,18 @@ export const POST = async (req: any) => {
   try {
 
     const {first_name, last_name, username, email, password} = await req.json();
-
-    if (await prisma.users.findUnique({where:{email:email}})){
+    if (!first_name?.trim() || !last_name?.trim() || !username?.trim()  || !email?.trim()  || !password?.trim()){
+      return NextResponse.json({status:400, message:"All field are require!"});
+    }
+    if (await prisma.user.findUnique({where:{email:email}})){
         return NextResponse.json({status:400, message:"Email Already Exist!"});
     }
-    if (await prisma.users.findUnique({where:{username:username}})){
+    if (await prisma.user.findUnique({where:{username:username}})){
         return NextResponse.json({status:400, message:"Username Already Exist!"});
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
-    const createUser = await prisma.users.create({
+    const createUser = await prisma.user.create({
       data: {
         first_name: first_name,
         last_name: last_name,

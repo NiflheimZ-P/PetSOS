@@ -1,11 +1,11 @@
 'use client'
 import "@/public/googleStyle.css";
-const GoogleButton = () => {
+const GoogleButton = ({ onClick }:any) => {
   return (
     <div className="w-full flex justify-center">
       <button
         className="gsi-material-button "
-
+        onClick={onClick}
         type="button"
       >
         <div className="gsi-material-button-state"></div>

@@ -26,6 +26,10 @@ const RegisterTabs = ({register,handleRegisterChange,setRegister}:RegisterTabsPr
   const router = useRouter();
   const handleRegister = async(e:any)=>{
     e.preventDefault();
+    if (!register.first_name?.trim() || !register.last_name?.trim() || !register.username?.trim() || !register.email?.trim() || !register.password?.trim() || !register.confirmPassword?.trim()){
+      toast.error("All field must be fill!")
+      return;
+    }
     if (register.password.length < 8 && register.confirmPassword.length < 8){
       toast.error("Password must be at least 8 characters long!");
       return;

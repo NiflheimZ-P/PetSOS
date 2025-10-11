@@ -6,67 +6,78 @@ import bcrypt from "bcrypt";
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
-    adapter: PrismaAdapter(prisma),
-    providers: [
-        CredentialsProvider({
-            name: "Credentials",
-            credentials: {
-                email: {label: "Email",type:"text"},
-                password: {label: "Password",type:"password"},
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(
+        credentials: Record<"email" | "password", string> | undefined
+      ) {
+        if (!credentials) {
+          return null;
+        }
+        const user = await prisma.user.findUnique({
+          where: {
+            email: credentials.email,
+          },
+        });
 
-            },
-            async authorize(credentials: Record<"email"|"password",string>|undefined){
-                if (!credentials) {
-                    return null;
-                }
-                const user = await prisma.users.findUnique({
-                    where: {
-                        email: credentials.email,
-                    },
-                });
-
-                if(user && await bcrypt.compare(credentials.password,user.password)){
-                    return {
-                        id: user.user_id,
-                        name: `${user.first_name} ${user.last_name}`,
-                        email: user.email,
-                        image: null,
-                    };
-                }
-                else{
-                    throw new Error("Invalid email or password");
-                }
-            },
-        }),
-        //Google Provider
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID as string,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-            profile(profile: any){
-                return{
-                    id: profile.sub,
-                    name: profile.name,
-                    email: profile.email,
-                    image: profile.picture,
-                }
-            }
-        }),
-    ],
-    session: {
-        strategy: "jwt",
+        if (
+          user &&
+          user.password &&
+          (await bcrypt.compare(credentials.password, user.password))
+        ) {
+          return {
+            id: user.id,
+            name: `${user.first_name} ${user.last_name}`,
+            email: user.email,
+            image: null,
+          };
+        } else {
+          throw new Error("Invalid email or password");
+        }
+      },
+    }),
+    //Google Provider
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      profile(profile: any) {
+        const [firstName, ...lastNameParts] = profile.name.split(" ");
+        const lastName = lastNameParts.join(" ");
+        return {
+          id: profile.sub,
+          first_name: firstName || null,
+          last_name: lastName || null,
+          email: profile.email,
+        };
+      },
+    }),
+  ],
+  session: {
+    strategy: "jwt",
+  },
+  callbacks: {
+    jwt: async ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
+        token.first_name = (user as any).first_name;
+        token.last_name = (user as any).last_name;
+      }
+      return token;
     },
-    callbacks: {
-        jwt: async({token,user}) => {
-            if(user){
-                token.id = user.id;
-            }
-            return token;
-        },
-        session: async({session,token}) =>{
-            if(session.user){
-                session.user.id = token.id as string;
-            }
-            return session;
-        },
+    session: async ({ session, token }) => {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.name = `${token.first_name || ""} ${
+          token.last_name || ""
+        }`.trim();
+      }
+      return session;
     },
+  },
 };
