@@ -15,6 +15,7 @@ import {
 import { useSession } from "next-auth/react";
 export function Navbar() {
     const { data: session } = useSession();
+    console.log("Session data:", session);
   return (
     <header className="sticky top-0 z-10 w-full border-b border-border bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -57,7 +58,7 @@ export function Navbar() {
             </Link>
 
                       {/* เช็คว่าเป็น admin รึป่าว */}
-            {session?.user?.role === "Admin" ? (
+            {session?.user?.role === "ADMIN" ? (
               <Link
                 href="/admin"
                 className="text-sm font-medium text-red-600 hover:text-red-800"
@@ -65,7 +66,7 @@ export function Navbar() {
                 Admin
               </Link>
             ) : (
-              <span className="text-sm font-medium border-b text-black ">Hello User</span>
+              <span className="text-sm font-medium border-b text-black "></span>
             )}
 
           </nav>
