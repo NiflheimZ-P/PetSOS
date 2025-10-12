@@ -7,6 +7,9 @@ import EditStatus from "@/components/Post/EditStatus";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+// map
+import MapWrapper from "./MapWrapper";
+
 interface PageProps {
   params: { post_id: string };
 }
@@ -92,6 +95,28 @@ const currentUserId = session?.user?.id ?? "";
                 {/* Contact Reporter */}
                 <ContactReporter name={ownerName} email={ownerEmail} />
               </div>
+              
+<div className="mt-6">
+  <label className="block text-lg font-medium mb-2 text-gray-900 dark:text-white">
+    Location
+  </label>
+
+  {/* Full-width map container */}
+  <div className="-mx-10 md:-mx-80 lg:-mx-100 ">
+    <div className="w-full h-80">
+      {post.lat && post.lng ? (
+        <MapWrapper lat={post.lat} lng={post.lng} />
+      ) : (
+        <p className="text-sm text-gray-500 px-10 md:px-20 lg:px-40">
+          No location
+        </p>
+      )}
+    </div>
+  </div>
+</div>
+
+
+
             </div>
 
             {/* Comments Section */}
