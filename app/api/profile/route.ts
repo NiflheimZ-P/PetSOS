@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-// ✅ GET: ดึงข้อมูลผู้ใช้จาก session
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -34,7 +33,7 @@ export async function GET() {
   }
 }
 
-// ✅ PUT: อัปเดตข้อมูลผู้ใช้
+
 export async function PUT(req: Request) {
   try {
     const session = await getServerSession(authOptions);
