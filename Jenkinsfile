@@ -103,9 +103,9 @@ pipeline {
                         export GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
                         export GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
 
-                        # Build and deploy all services (app1, app2, HAProxy)
-                        docker compose --env-file ${ENV_FILE} build
-                        docker compose --env-file ${ENV_FILE} up -d
+                        # Build and deploy all services
+                        docker compose build
+                        docker compose up -d
                     '''
                 }
             }
