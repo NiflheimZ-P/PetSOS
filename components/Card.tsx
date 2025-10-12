@@ -15,6 +15,7 @@ export function Card({ title, location, timeAgo, imageUrl }: CardProps) {
           alt={title}
           fill
           className="object-cover transition-transform group-hover:scale-105"
+          unoptimized
         />
       </div>
       <div className="flex flex-1 flex-col p-4">

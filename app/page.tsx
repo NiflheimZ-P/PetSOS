@@ -61,7 +61,7 @@ export default async function Page({
                     title={post.detail || "Untitled Post"}
                     // location={post.location || "Unknown"}
                     timeAgo={new Date(post.created_at).toLocaleString()}
-                    imageUrl={post.image_url || "/default.jpg"}
+                    imageUrl={post.image_url || "/no-img.png"}
                   />
                 </Link>
               ))}

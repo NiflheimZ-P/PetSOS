@@ -71,10 +71,11 @@ const currentUserId = session?.user?.id ?? "";
               <div className="mb-6 rounded-2xl overflow-hidden shadow-lg max-w-[600px] w-full">
                 <div className="relative w-full h-[400px]">
                   <Image
-                    src={post.image_url || "/default.jpg"}
+                    src={post.image_url || "/no-img.png"}
                     alt={post.detail || "Post image"}
                     fill
                     className="object-cover"
+                    unoptimized
                   />
                 </div>
               </div>
