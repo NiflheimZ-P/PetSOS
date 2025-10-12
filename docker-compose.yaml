@@ -38,6 +38,9 @@ services:
     depends_on:
       - app1
       - app2
+    networks:
+      - pet-networks
+
   node-exporter:
     image: prom/node-exporter
     container_name: node-exporter
