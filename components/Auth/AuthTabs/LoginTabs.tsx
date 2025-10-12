@@ -1,8 +1,8 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useEffect,useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TabsContent } from "@/components/ui/tabs";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import GoogleSignIn from "@/components/Auth/Button/GoogleButton"; 
@@ -34,14 +34,15 @@ const LoginTabs = ({login,handleLoginChange}:LoginTabsProps )=> {
       const result = await signIn("credentials", {
         email: login.email,
         password: login.password,
-        callbackUrl: "/",
+        // callbackUrl: "/",
+        redirect:false
       });
 
       if (result?.error) {
         toast.error(result.error);
       } else {
         toast.success("Login successful");
-        // router.push('/');
+        window.location.reload();
         // หลัง login ให้ fetch session มาตรวจ role
         // const sessionRes = await fetch("/api/auth/session");
         // const session = await sessionRes.json();

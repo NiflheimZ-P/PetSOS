@@ -62,7 +62,7 @@ const RegisterTabs = ({register,handleRegisterChange,setRegister}:RegisterTabsPr
       if (result?.error){
         toast.error(result.error);
       } else {
-        router.push("/");
+        window.location.reload();
       }
     } catch (error){
       console.error(error);
