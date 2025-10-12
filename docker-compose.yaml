@@ -34,5 +34,36 @@ services:
     depends_on:
       - app1
       - app2
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    restart: unless-stopped
+    networks:
+      - monitor_net
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - monitor_net
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    volumes:
+      - ./monitor/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./monitor/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./monitor/grafana-dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "3000:3000"
+    networks:
+      - monitor_net
 networks:
   pet-networks:
+    name: pet_net
+  monitor_net:
+    name: monitor_net
