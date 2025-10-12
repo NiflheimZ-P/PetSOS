@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link"
 import { Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -10,7 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+
+import { useSession } from "next-auth/react";
 export function Navbar() {
+    const { data: session } = useSession();
   return (
     <header className="sticky top-0 z-10 w-full border-b border-border bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -51,6 +55,18 @@ export function Navbar() {
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               create your post
             </Link>
+
+                      {/* เช็คว่าเป็น admin รึป่าว */}
+            {session?.user?.role === "Admin" ? (
+              <Link
+                href="/admin"
+                className="text-sm font-medium text-red-600 hover:text-red-800"
+              >
+                Admin
+              </Link>
+            ) : (
+              <span className="text-sm font-medium border-b text-black ">Hello User</span>
+            )}
 
           </nav>
         </div>
