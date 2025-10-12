@@ -1,0 +1,2 @@
+This is a record to count how many time do i need to push to dev till jenkins can work?
+1.here is first time -> 100% error cause fix jenkinsfile
