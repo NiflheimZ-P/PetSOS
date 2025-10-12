@@ -14,6 +14,7 @@ export async function middleware(request: any) {
   if (token && pathname.startsWith("/auth")) {
     return NextResponse.redirect(new URL("/", request.url));
   }
+  console.log(`Request to ${request.url} handled by ${process.env.HOSTNAME || 'app1/app2'}`);
   return NextResponse.next();
 }
 export const config = {
