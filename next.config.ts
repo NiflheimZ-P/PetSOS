@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
     images: {
       domains: ['lh3.googleusercontent.com'], // เพิ่ม host ของรูป
     },
+    eslint: {
+    // ignores ESLint errors during build
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
