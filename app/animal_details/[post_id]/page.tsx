@@ -95,7 +95,7 @@ const currentUserId = session?.user?.id ?? "";
                 {/* Contact Reporter */}
                 <ContactReporter name={ownerName} email={ownerEmail} />
               </div>
-              
+                            
 <div className="mt-6">
   <label className="block text-lg font-medium mb-2 text-gray-900 dark:text-white">
     Location
