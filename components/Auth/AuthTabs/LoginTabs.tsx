@@ -95,7 +95,7 @@ const LoginTabs = ({login,handleLoginChange}:LoginTabsProps )=> {
         <Button className="w-full" onClick={check} >Login</Button>
       </form>
       <br />
-      <GoogleSignIn onClick={()=> signIn("google",{callbackUrl:"/"})} />
+      {/* <GoogleSignIn onClick={()=> signIn("google",{callbackUrl:"/"})} /> */}
     </TabsContent>
   );
 };
