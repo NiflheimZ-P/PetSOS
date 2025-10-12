@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import Image from "next/image";
+import Link from "next/link"
 import AddCommentForm from "./AddCommentForm";
 import ContactReporter from "@/components/Post/ContactReporter";
 import EditStatus from "@/components/Post/EditStatus";
@@ -51,9 +52,9 @@ const currentUserId = session?.user?.id ?? "";
           <div className="max-w-4xl mx-auto">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm font-medium mb-6">
-              <a className="text-primary hover:underline" href="/animal_details">
+              <Link href="/" className="text-primary hover:underline">
                 Lost Pets
-              </a>
+              </Link>
               <span className="text-black/40 dark:text-white/40">/</span>
               <span className="text-black dark:text-white">
                 {post.detail?.slice(0, 30) || "Post"}
