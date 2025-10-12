@@ -7,7 +7,9 @@ import React from 'react';
 
 // หากคุณใช้ Next.js App Router (มาตรฐานปัจจุบัน) ไฟล์นี้คือ page.tsx
 import dynamic from "next/dynamic";
+import { useSession } from 'next-auth/react'
 import type { LeafletMapProps } from "./LeafletMap";
+
 
 const LeafletMap = dynamic<LeafletMapProps>(
   () => import("./LeafletMap"),
@@ -24,23 +26,27 @@ type Post = {
 };
 
 export default function CreatePostPage() {
-
+  
   const [posts, setPosts] = useState<Post[]>([]);
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  
+  const { data: session, status } = useSession()
+  let owner_id: string;
 
   async function myPost() {
-    const owner = '77ccabdf-24c3-49e0-a7f9-0c67d289639c';
-    const res = await fetch(`/api/posts?post_owner=${encodeURIComponent(owner)}`, {
-      method: 'GET',
-      // ห้ามใส่ body!
-      cache: 'no-store', // ถ้าอยากกัน cache ขณะ dev
-    });
-    if (!res.ok) throw new Error('Failed to fetch posts');
-    const data = await res.json();
-    setPosts(data);
-    console.log(data);
+    if (session) {
+      owner_id = session.user.id;
+      const res = await fetch(`/api/posts?post_owner=${encodeURIComponent(owner_id)}`, {
+        method: 'GET',
+        // ห้ามใส่ body!
+        cache: 'no-store', // ถ้าอยากกัน cache ขณะ dev
+      });
+      if (!res.ok) throw new Error('Failed to fetch posts');
+      const data = await res.json();
+      setPosts(data);
+    }
   }
 
 
@@ -83,8 +89,9 @@ export default function CreatePostPage() {
       }
 
       const data = await res.json();
-      alert("Saved! id = " + data.post_id);
+      // alert("Saved! id = " + data.post_id);
       formRef.current.reset();
+      await myPost()
     } catch (error) {
       alert("Error: " + (error as Error).message);
     }

@@ -1,20 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth"
 import prisma from "@/lib/prisma";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import crypto from "crypto";
 
 export async function GET(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  let owner = session?.user
   try {
-    const owner = req.nextUrl.searchParams.get('post_owner');
-    // ตรวจสอบค่า
     if (!owner) {
       return NextResponse.json({ error: 'post_owner is required' }, { status: 400 });
     }
 
     // ตัวอย่างใช้ Prisma
     const posts = await prisma.posts.findMany({
-      where: { post_owner: owner },
+      where: { post_owner: owner.id },
     });
 
     // ตัวอย่างตอบกลับจำลอง
@@ -28,6 +30,13 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  let owner = session?.user
+
+  if (!owner) {
+    return NextResponse.json({error: "Cannot verify user", status: 401})
+  }
+
   try {
     const form = await req.formData();
 
@@ -86,7 +95,7 @@ export async function POST(req: NextRequest) {
     // บันทึกลง DB (Decimal ใน Prisma รับ string)
     const post = await prisma.posts.create({
       data: {
-        post_owner: "77ccabdf-24c3-49e0-a7f9-0c67d289639c", // สมมติ user_id ตายตัวก่อน
+        post_owner: owner.id,
         type: "TEXT",
         detail,
         status: "LOST",
