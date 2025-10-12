@@ -19,30 +19,43 @@ type LoginTabsProps = {
 
 const LoginTabs = ({login,handleLoginChange}:LoginTabsProps )=> {
   const router = useRouter();
-  const check = async(e:any) =>{
+  const check = async (e: any) => {
     e.preventDefault();
-    if (!login.email || !login.password){
+    if (!login.email || !login.password) {
       toast.error("Please fill all fields");
       return;
     }
-    if(login.password.length < 8){
+    if (login.password.length < 8) {
       toast.error("Password must be at least 8 characters long");
       return;
     }
-    try{
-      const result = await signIn("credentials",{
+
+    try {
+      const result = await signIn("credentials", {
         email: login.email,
         password: login.password,
         redirect: false,
       });
-      if (result?.error){
+
+      if (result?.error) {
         toast.error(result.error);
-      }else{
+      } else {
         toast.success("Login successful");
-        router.push("/");
+
+        // หลัง login ให้ fetch session มาตรวจ role
+        const sessionRes = await fetch("/api/auth/session");
+        const session = await sessionRes.json();
+
+        if (session?.user?.role === "ADMIN") {
+          console.log("User is admin");
+          router.push("/admin"); // ถ้าเป็น admin redirect ไปหน้า admin
+        } else {
+          console.log("User is regular");
+          router.push("/"); // ถ้าไม่ใช่ admin ไปหน้า homepage
+        }
       }
-    }catch(error){
-      toast.error(error as string)
+    } catch (error) {
+      toast.error(error as string);
     }
   };
   return (

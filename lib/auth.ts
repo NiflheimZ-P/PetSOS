@@ -14,16 +14,10 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(
-        credentials: Record<"email" | "password", string> | undefined
-      ) {
-        if (!credentials) {
-          return null;
-        }
+      async authorize(credentials) {
+        if (!credentials) return null;
         const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
+          where: { email: credentials.email },
         });
 
         if (
@@ -36,13 +30,14 @@ export const authOptions: NextAuthOptions = {
             name: `${user.first_name} ${user.last_name}`,
             email: user.email,
             image: null,
+            role: user.role, // เพิ่ม
           };
         } else {
           throw new Error("Invalid email or password");
         }
       },
     }),
-    //Google Provider
+
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
@@ -54,30 +49,38 @@ export const authOptions: NextAuthOptions = {
           first_name: firstName || null,
           last_name: lastName || null,
           email: profile.email,
+          role: "USER", //default สำหรับ Google login
         };
       },
     }),
   ],
+
   session: {
     strategy: "jwt",
   },
+
   callbacks: {
     jwt: async ({ token, user }) => {
       if (user) {
         token.id = user.id;
         token.first_name = (user as any).first_name;
         token.last_name = (user as any).last_name;
+        token.role = (user as any).role || "USER"; // เพิ่ม
       }
       return token;
     },
+
     session: async ({ session, token }) => {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.name = `${token.first_name || ""} ${
           token.last_name || ""
         }`.trim();
+        session.user.role = token.role as string; // ✅ เพิ่ม
       }
       return session;
     },
   },
+
+  secret: process.env.NEXTAUTH_SECRET,
 };
