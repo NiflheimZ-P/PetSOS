@@ -4,7 +4,7 @@ services:
   app1:
     build: .
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       DATABASE_URL: ${DATABASE_URL}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
@@ -16,7 +16,7 @@ services:
   app2:
     build: .
     ports:
-      - "3001:3000"   # different host port to avoid conflict
+      - "3002:3002"   # different host port to avoid conflict
     environment:
       DATABASE_URL: ${DATABASE_URL}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
