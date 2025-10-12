@@ -22,12 +22,12 @@ services:
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
 
-  haproxy:
-    image: haproxy:2.8
+  nginx:
+    image: nginx:latest
     ports:
       - "80:80"
     volumes:
-      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - app1
       - app2
