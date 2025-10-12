@@ -1,6 +1,30 @@
+"use client";
 import ProfileLayout from "@/components/ProfileLayout"
+import { useEffect, useState } from "react";
 
 export default function NotificationPage() {
+
+  type Notification = {
+    id: string;
+    message: string;
+    created_at?: string; // add createdAt property, optional if not always present
+    // add other properties if needed
+  };
+
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  async function fetchNotifications() {
+    const res = await fetch("/api/notification")
+    const data = await res.json()
+    console.log(data)
+    setNotifications(data)
+  }
+
+  useEffect(() => {
+    fetchNotifications()
+  }, []);
+
+
   return (
     <ProfileLayout>
       <div className="max-w-4xl mx-auto">
@@ -8,10 +32,33 @@ export default function NotificationPage() {
           Notifications
         </h1>
 
+
         {/* Notification List */}
         <div className="mt-8 space-y-4">
+
+          {notifications.length === 0 ? (
+            <p className="text-muted-foreground">No notifications found.</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-1 lg:grid-cols-1">
+              {notifications.map((noti) => (
+                <div key={noti.id} className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
+                  <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
+                    <span className="material-symbols-outlined">comment</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      {noti.message || "You have a new notification"}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {noti.created_at ? new Date(noti.created_at).toLocaleString() : ''}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
           {/* ตัวอย่างแจ้งเตือน 1 */}
-          <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
+          {/* <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
             <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
               <span className="material-symbols-outlined">notifications</span>
             </div>
@@ -23,10 +70,10 @@ export default function NotificationPage() {
                 10 minutes ago
               </p>
             </div>
-          </div>
+          </div> */}
 
           {/* ตัวอย่างแจ้งเตือน 2 */}
-          <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
+          {/* <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
             <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
               <span className="material-symbols-outlined">check_circle</span>
             </div>
@@ -38,10 +85,10 @@ export default function NotificationPage() {
                 2 hours ago
               </p>
             </div>
-          </div>
+          </div> */}
 
           {/* ตัวอย่างแจ้งเตือน 3 */}
-          <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
+          {/* <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
             <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
               <span className="material-symbols-outlined">comment</span>
             </div>
@@ -53,7 +100,7 @@ export default function NotificationPage() {
                 Yesterday
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* ปุ่มจัดการ */}

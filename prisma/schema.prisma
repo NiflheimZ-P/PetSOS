@@ -41,6 +41,7 @@ model User {
 
   
   accounts Account[]
+  notifications notifications[]
 }
 
 model Account {
@@ -86,4 +87,14 @@ model post_comments {
 
   owner User @relation("UserComments", fields: [comment_owner], references: [id])
   post posts @relation(fields: [post_id], references: [post_id])
+}
+
+model notifications {
+  id String @id @default(uuid())
+  userId String
+  message String
+  isRead Boolean @default(false)
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -6,9 +6,12 @@ import { Card } from "@/components/Card";
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: { query?: string };
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const query = searchParams?.query || "";
+  const sp = (await searchParams) ?? {};
+  const queryRaw = sp.query;
+
+  const query = Array.isArray(queryRaw) ? queryRaw[0] : queryRaw ?? "";
 
   let posts;
 
@@ -58,7 +61,7 @@ export default async function Page({
                     title={post.detail || "Untitled Post"}
                     // location={post.location || "Unknown"}
                     timeAgo={new Date(post.created_at).toLocaleString()}
-                    imageUrl={post.image_url || "/default.jpg"}
+                    imageUrl={post.image_url || "/no-img.png"}
                   />
                 </Link>
               ))}

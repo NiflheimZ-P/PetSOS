@@ -7,12 +7,19 @@ import EditStatus from "@/components/Post/EditStatus";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+// map
+import MapWrapper from "./MapWrapper";
+
 interface PageProps {
   params: { post_id: string };
 }
 
-export default async function LostPetDetails({ params }: PageProps) {
-  const { post_id } = params;
+export default async function LostPetDetails({
+  params,
+}: {
+  params: Promise<{ post_id: string }>;
+}) {
+  const { post_id } = await params;
 
   const post = await prisma.posts.findUnique({
     where: { post_id },
@@ -67,10 +74,11 @@ const currentUserId = session?.user?.id ?? "";
               <div className="mb-6 rounded-2xl overflow-hidden shadow-lg max-w-[600px] w-full">
                 <div className="relative w-full h-[400px]">
                   <Image
-                    src={post.image_url || "/default.jpg"}
+                    src={post.image_url || "/no-img.png"}
                     alt={post.detail || "Post image"}
                     fill
                     className="object-cover"
+                    unoptimized
                   />
                 </div>
               </div>
@@ -87,6 +95,28 @@ const currentUserId = session?.user?.id ?? "";
                 {/* Contact Reporter */}
                 <ContactReporter name={ownerName} email={ownerEmail} />
               </div>
+                            
+<div className="mt-6">
+  <label className="block text-lg font-medium mb-2 text-gray-900 dark:text-white">
+    Location
+  </label>
+
+  {/* Full-width map container */}
+  <div className="-mx-10 md:-mx-80 lg:-mx-100 ">
+    <div className="w-full h-80">
+      {post.lat && post.lng ? (
+        <MapWrapper lat={post.lat} lng={post.lng} />
+      ) : (
+        <p className="text-sm text-gray-500 px-10 md:px-20 lg:px-40">
+          No location
+        </p>
+      )}
+    </div>
+  </div>
+</div>
+
+
+
             </div>
 
             {/* Comments Section */}
@@ -100,35 +130,38 @@ const currentUserId = session?.user?.id ?? "";
               </div>
 
               <div className="space-y-6">
-                {post.comments.map((c) => (
-                  <div key={c.comment_id} className="flex items-start gap-4">
-                    <Image
-                      src={c.owner?.image_url || "/default-avatar.png"}
-                      alt={c.owner?.username || "User"}
-                      width={40}
-                      height={40}
-                      className="w-10 h-10 rounded-full"
-                    />
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-bold">
-                          {c.owner?.username ||
-                            [c.owner?.first_name, c.owner?.last_name]
-                              .filter(Boolean)
-                              .join(" ") ||
-                            "Unknown User"}
-                        </p>
-                        <p className="text-xs text-black/50 dark:text-white/50">
-                          {new Date(c.created_at).toLocaleString()}
-                        </p>
+                {post.comments.map((c) => {
+                  const name =
+                    c.owner?.username ||
+                    [c.owner?.first_name, c.owner?.last_name].filter(Boolean).join(" ") ||
+                    "Unknown User";
+
+                  const initial = name.charAt(0).toUpperCase();
+
+                  return (
+                    <div key={c.comment_id} className="flex items-start gap-4">
+                      {/* Profile */}
+                      <div className="flex-shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold" >
+                          {initial}
+                        </div>
                       </div>
-                      <p className="text-base text-black/80 dark:text-white/80">
-                        {c.comment}
-                      </p>
+
+                      {/* Comment*/}
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="font-bold">{name}</p>
+                          <p className="text-xs text-black/50 dark:text-white/50">
+                            {new Date(c.created_at).toLocaleString()}
+                          </p>
+                        </div>
+                        <p className="text-base text-black/80 dark:text-white/80">{c.comment}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
+
             </div>
           </div>
         </main>
