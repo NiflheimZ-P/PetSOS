@@ -12,6 +12,8 @@ services:
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
     command: "npm run start" # or next start -H 0.0.0.0
+    networks:
+      - pet-networks
 
   app2:
     build: .
@@ -24,6 +26,8 @@ services:
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
     command: "npm run start"
+    networks:
+      - pet-networks
 
   nginx:
     image: nginx:latest
@@ -64,6 +68,6 @@ services:
       - monitor_net
 networks:
   pet-networks:
-    name: pet_net
+    name: pet_networks
   monitor_net:
     name: monitor_net
