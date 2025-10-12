@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { post_id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ post_id: string }> }
 ) {
   try {
-    const { post_id } = params;
+    const { post_id } = await params;
     const { status } = await request.json();
 
     // Authen

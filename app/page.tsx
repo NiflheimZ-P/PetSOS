@@ -6,9 +6,12 @@ import { Card } from "@/components/Card";
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: { query?: string };
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const query = searchParams?.query || "";
+  const sp = (await searchParams) ?? {};
+  const queryRaw = sp.query;
+
+  const query = Array.isArray(queryRaw) ? queryRaw[0] : queryRaw ?? "";
 
   let posts;
 

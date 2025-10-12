@@ -11,8 +11,12 @@ interface PageProps {
   params: { post_id: string };
 }
 
-export default async function LostPetDetails({ params }: PageProps) {
-  const { post_id } = params;
+export default async function LostPetDetails({
+  params,
+}: {
+  params: Promise<{ post_id: string }>;
+}) {
+  const { post_id } = await params;
 
   const post = await prisma.posts.findUnique({
     where: { post_id },
@@ -102,13 +106,6 @@ const currentUserId = session?.user?.id ?? "";
               <div className="space-y-6">
                 {post.comments.map((c) => (
                   <div key={c.comment_id} className="flex items-start gap-4">
-                    <Image
-                      src={c.owner?.image_url || "/default-avatar.png"}
-                      alt={c.owner?.username || "User"}
-                      width={40}
-                      height={40}
-                      className="w-10 h-10 rounded-full"
-                    />
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <p className="font-bold">
