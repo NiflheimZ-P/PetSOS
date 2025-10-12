@@ -27,6 +27,15 @@ export default function AddCommentForm({
       }),
     });
 
+    await fetch("/api/notification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        post_id: postId,
+        message: `New comment on your post: "${comment}"`,
+      }),
+    });
+
     if (res.ok) {
       setComment("");
       // Refresh comments (simplest: reload the page)

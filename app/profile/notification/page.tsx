@@ -1,6 +1,28 @@
+"use client";
 import ProfileLayout from "@/components/ProfileLayout"
+import { useEffect, useState } from "react";
 
 export default function NotificationPage() {
+
+  type Notification = {
+    message: string;
+    created_at?: string; // add createdAt property, optional if not always present
+    // add other properties if needed
+  };
+
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  async function fetchNotifications() {
+    const res = await fetch("/api/notification")
+    const data = await res.json()
+    setNotifications(data)
+  }
+
+  useEffect(() => {
+    fetchNotifications()
+  }, []);
+
+
   return (
     <ProfileLayout>
       <div className="max-w-4xl mx-auto">
@@ -8,10 +30,26 @@ export default function NotificationPage() {
           Notifications
         </h1>
 
+
         {/* Notification List */}
         <div className="mt-8 space-y-4">
+          {notifications.length > 0 && (
+            <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
+              <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
+                <span className="material-symbols-outlined">comment</span>
+              </div>
+              <div className="flex-1">
+                <p className="text-gray-900 dark:text-white font-medium">
+                  {notifications[0]?.message || "You have a new notification"}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {notifications[0]?.created_at ? new Date(notifications[0].created_at).toLocaleString() : ''}
+                </p>
+              </div>
+            </div>
+          )}
           {/* ตัวอย่างแจ้งเตือน 1 */}
-          <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
+          {/* <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
             <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
               <span className="material-symbols-outlined">notifications</span>
             </div>
@@ -23,10 +61,10 @@ export default function NotificationPage() {
                 10 minutes ago
               </p>
             </div>
-          </div>
+          </div> */}
 
           {/* ตัวอย่างแจ้งเตือน 2 */}
-          <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
+          {/* <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
             <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
               <span className="material-symbols-outlined">check_circle</span>
             </div>
@@ -38,10 +76,10 @@ export default function NotificationPage() {
                 2 hours ago
               </p>
             </div>
-          </div>
+          </div> */}
 
           {/* ตัวอย่างแจ้งเตือน 3 */}
-          <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
+          {/* <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
             <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
               <span className="material-symbols-outlined">comment</span>
             </div>
@@ -53,7 +91,7 @@ export default function NotificationPage() {
                 Yesterday
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* ปุ่มจัดการ */}
