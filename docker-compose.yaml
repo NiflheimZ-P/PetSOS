@@ -1,26 +1,29 @@
 version: "3.8"
+
 services:
   app1:
     build: .
-    expose:
-      - "3000"
+    ports:
+      - "3000:3000"
     environment:
       DATABASE_URL: ${DATABASE_URL}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+    command: "npm run start" # or next start -H 0.0.0.0
 
   app2:
     build: .
-    expose:
-      - "3000"
+    ports:
+      - "3001:3000"   # different host port to avoid conflict
     environment:
       DATABASE_URL: ${DATABASE_URL}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+    command: "npm run start"
 
   nginx:
     image: nginx:latest
