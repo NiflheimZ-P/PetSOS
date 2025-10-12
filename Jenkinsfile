@@ -33,17 +33,26 @@ pipeline {
 
         stage('Run Docker Container') {
             steps {
-                // Load environment variables from .env file
-                sh 'export $(grep -v "^#" .env | xargs)'
-
-                // Run container with ports and env vars
-                sh """
-                    docker run -d \
-                        --name ${IMAGE_NAME} \
-                        -p 3000:3000 \
-                        --env-file .env \
-                        ${IMAGE_NAME}:${IMAGE_TAG}
-                """
+                // Pull environment variables from Jenkins credentials
+                withCredentials([
+                    string(credentialsId: 'database-url', variable: 'DATABASE_URL'),
+                    string(credentialsId: 'nextauth-secret', variable: 'NEXTAUTH_SECRET'),
+                    string(credentialsId: 'nextauth-url', variable: 'NEXTAUTH_URL'),
+                    string(credentialsId: 'google-client-id', variable: 'GOOGLE_CLIENT_ID'),
+                    string(credentialsId: 'google-client-secret', variable: 'GOOGLE_CLIENT_SECRET')
+                ]) {
+                    sh """
+                        docker run -d \
+                            --name ${IMAGE_NAME} \
+                            -p 3000:3000 \
+                            -e DATABASE_URL=$DATABASE_URL \
+                            -e NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
+                            -e NEXTAUTH_URL=$NEXTAUTH_URL \
+                            -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
+                            -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
+                            ${IMAGE_NAME}:${IMAGE_TAG}
+                    """
+                }
             }
         }
     }
