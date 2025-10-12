@@ -1,7 +1,7 @@
 import Image from "next/image"
 interface CardProps {
   title: string
-  location: string
+  location?: string
   timeAgo: string
   imageUrl: string
 }

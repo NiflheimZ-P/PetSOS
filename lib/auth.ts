@@ -50,6 +50,7 @@ export const authOptions: NextAuthOptions = {
           last_name: lastName || null,
           email: profile.email,
           role: "USER", //default สำหรับ Google login
+          password: null,
         };
       },
     }),
