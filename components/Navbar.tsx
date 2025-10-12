@@ -15,7 +15,7 @@ import {
 import { useSession } from "next-auth/react";
 export function Navbar() {
     const { data: session } = useSession();
-    console.log("Session data:", session);
+    // console.log("Session data:", session);
   return (
     <header className="sticky top-0 z-10 w-full border-b border-border bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">

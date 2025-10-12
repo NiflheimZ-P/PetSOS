@@ -34,25 +34,25 @@ const LoginTabs = ({login,handleLoginChange}:LoginTabsProps )=> {
       const result = await signIn("credentials", {
         email: login.email,
         password: login.password,
-        redirect: false,
+        callbackUrl: "/",
       });
 
       if (result?.error) {
         toast.error(result.error);
       } else {
         toast.success("Login successful");
-
+        // router.push('/');
         // หลัง login ให้ fetch session มาตรวจ role
-        const sessionRes = await fetch("/api/auth/session");
-        const session = await sessionRes.json();
+        // const sessionRes = await fetch("/api/auth/session");
+        // const session = await sessionRes.json();
 
-        if (session?.user?.role === "ADMIN") {
-          console.log("User is admin");
-          router.push("/admin"); // ถ้าเป็น admin redirect ไปหน้า admin
-        } else {
-          console.log("User is regular");
-          router.push("/"); // ถ้าไม่ใช่ admin ไปหน้า homepage
-        }
+        // if (session?.user?.role === "ADMIN") {
+        //   // console.log("User is admin");
+        //   router.push("/admin"); // ถ้าเป็น admin redirect ไปหน้า admin
+        // } else {
+        //   // console.log("User is regular");
+        //   router.push("/"); // ถ้าไม่ใช่ admin ไปหน้า homepage
+        // }
       }
     } catch (error) {
       toast.error(error as string);

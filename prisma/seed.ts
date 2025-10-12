@@ -57,7 +57,7 @@ async function main() {
       post_owner: admin.id,
       type: PostType.IMAGE,
       detail: "Beautiful sunset today 🌅",
-      image_url: "https://example.com/sunset.jpg",
+      image_url: "",
       status: "public",
     },
   });
