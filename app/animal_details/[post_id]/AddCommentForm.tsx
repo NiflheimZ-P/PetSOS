@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function AddCommentForm({
   postId,
@@ -49,10 +50,13 @@ export default function AddCommentForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex items-start gap-4">
-      <img
-        className="w-10 h-10 rounded-full"
-        src="https://lh3.googleusercontent.com/a/default-avatar"
+      <Image
+        src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg"
         alt="Current user avatar"
+        width={40}
+        height={40}
+        className="rounded-full"
+        unoptimized
       />
       <div className="flex-1">
         <textarea
