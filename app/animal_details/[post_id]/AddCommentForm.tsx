@@ -28,7 +28,7 @@ export default function AddCommentForm({
       }),
     });
 
-    await fetch("/api/notification", {
+    let noti = await fetch("/api/notification", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -36,6 +36,8 @@ export default function AddCommentForm({
         message: `New comment on your post: "${comment}"`,
       }),
     });
+
+    console.log("Noti", noti)
 
     if (res.ok) {
       setComment("");

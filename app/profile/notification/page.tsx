@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 export default function NotificationPage() {
 
   type Notification = {
+    id: string;
     message: string;
     created_at?: string; // add createdAt property, optional if not always present
     // add other properties if needed
@@ -15,6 +16,7 @@ export default function NotificationPage() {
   async function fetchNotifications() {
     const res = await fetch("/api/notification")
     const data = await res.json()
+    console.log(data)
     setNotifications(data)
   }
 
@@ -33,19 +35,26 @@ export default function NotificationPage() {
 
         {/* Notification List */}
         <div className="mt-8 space-y-4">
-          {notifications.length > 0 && (
-            <div className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
-              <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
-                <span className="material-symbols-outlined">comment</span>
-              </div>
-              <div className="flex-1">
-                <p className="text-gray-900 dark:text-white font-medium">
-                  {notifications[0]?.message || "You have a new notification"}
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {notifications[0]?.created_at ? new Date(notifications[0].created_at).toLocaleString() : ''}
-                </p>
-              </div>
+
+          {notifications.length === 0 ? (
+            <p className="text-muted-foreground">No notifications found.</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-1 lg:grid-cols-1">
+              {notifications.map((noti) => (
+                <div key={noti.id} className="flex items-start gap-4 p-4 border rounded-lg bg-background-light dark:bg-background-dark border-gray-200 dark:border-gray-700 hover:bg-primary/5 transition">
+                  <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
+                    <span className="material-symbols-outlined">comment</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      {noti.message || "You have a new notification"}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {noti.created_at ? new Date(noti.created_at).toLocaleString() : ''}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
           {/* ตัวอย่างแจ้งเตือน 1 */}
