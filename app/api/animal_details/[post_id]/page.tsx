@@ -81,7 +81,7 @@ const currentUserId = session?.user?.id ?? "";
                 </h1>
 
                 {/* Editable status */}
-                <EditStatus postId={post.post_id} status={post.status} isOwner={isOwner} />
+                <EditStatus postId={post.post_id} currentStatus={post.status} isOwner={isOwner} />
 
                 {/* Contact Reporter */}
                 <ContactReporter name={ownerName} email={ownerEmail} />

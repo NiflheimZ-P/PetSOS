@@ -11,8 +11,13 @@ type Post = {
   post_owner: string;
   detail?: string;
   location?: string;
-  owner?: { username: string };
+  owner?: {
+    username?: string;
+    first_name?: string;
+    last_name?: string;
+  };
 };
+
 
 const Searchbar = () => {
   const [query, setQuery] = useState("");
@@ -42,7 +47,7 @@ const Searchbar = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    router.push(`/animal_details/search?query=${encodeURIComponent(query)}`);
+    router.push(`/?query=${encodeURIComponent(query)}`);
   };
 
   return (
@@ -75,8 +80,11 @@ const Searchbar = () => {
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                     <div className="font-semibold">
-                        {post.owner?.username || post.post_owner}
+                        {post.owner?.username ||
+                        [post.owner?.first_name, post.owner?.last_name].filter(Boolean).join(" ") ||
+                        "anon"}
                     </div>
+
                     <div className="text-sm text-muted-foreground truncate">
                         {post.location}: {post.detail}
                     </div>

@@ -9,19 +9,31 @@ export async function GET(request: Request) {
 
   const posts = await prisma.posts.findMany({
     where: {
-      OR: [
-        {
-          owner: {
-            username: { contains: query, mode: "insensitive" },
-          },
-        },
+        OR: [
         { detail: { contains: query, mode: "insensitive" } },
-        // { location: { contains: query, mode: "insensitive" } },
-      ],
+        //   { location: { contains: query, mode: "insensitive" } },
+        {
+            owner: {
+            OR: [
+                { username: { contains: query, mode: "insensitive" } },
+                { first_name: { contains: query, mode: "insensitive" } },
+                { last_name: { contains: query, mode: "insensitive" } },
+            ],
+            },
+        },
+        ],
     },
-    include: {owner: { select: { username: true } },},
-    take: 5,
-  });
+    include: {
+        owner: {
+        select: {
+            username: true,
+            first_name: true,
+            last_name: true,
+        },
+        },
+    },
+    });
+
 
   return NextResponse.json(posts);
 }
