@@ -108,26 +108,6 @@ export default function CreatePostPage() {
     // Body Wrapper
     <div className="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
       <div className="flex min-h-screen">
-        
-        {/* Sidebar (Aside) */}
-        <aside className="w-64 flex-shrink-0 bg-background-light dark:bg-background-dark p-6 border-r border-primary/20 dark:border-primary/30">
-          
-          {/* Navigation */}
-          <nav className="flex flex-col gap-2">
-            <a className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/20 dark:bg-primary/30 text-primary font-bold" href="#">
-              <span className="material-symbols-outlined"> add_circle </span>
-              <span>New Post</span>
-            </a>
-            <a className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20" href="#">
-              <span className="material-symbols-outlined"> detail </span>
-              <span>My Posts</span>
-            </a>
-            <a className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20" href="#">
-              <span className="material-symbols-outlined"> bookmark </span>
-              <span>Saved Posts</span>
-            </a>
-          </nav>
-        </aside>
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col">

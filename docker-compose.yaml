@@ -5,6 +5,8 @@ services:
     build: .
     ports:
       - "3001:3001"
+    volumes:
+      - ./uploads:/app/uploads 
     environment:
       DATABASE_URL: ${DATABASE_URL}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
@@ -19,6 +21,8 @@ services:
     build: .
     ports:
       - "3002:3002"   # different host port to avoid conflict
+    volumes:
+      - ./uploads:/app/uploads 
     environment:
       DATABASE_URL: ${DATABASE_URL}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
