@@ -12,10 +12,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
+
 export function Navbar() {
     const { data: session } = useSession();
-    // console.log("Session data:", session);
+    console.log("Session data:", session);
   return (
     <header className="sticky top-0 z-10 w-full border-b border-border bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -96,7 +97,7 @@ export function Navbar() {
               <Link href="/profile">
                 <Avatar className="cursor-pointer hover:opacity-80 transition">
                   <AvatarImage
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1dh9E62x3If0tvhUQrRuXRHVhGTpMUMgNGQgSrFIo_lJB2opmFL1nhE8ajHpvC2InQ0GdUbr8US8IOEUvmSeSe1QK3AFNn99NSY6zEqVipXIjS9WjbBPug5eWDJITSNZihol7Hp_oNDO0PRwMdV3yNC60S7yeiaiEJMEDmb040R1TumntnIgs8m9fJlo6dtqC_39koUAzY94ZfydJWv46zZiUasDFR0ZLOOBrvsFq8D1LrCBr759isyX8HvOd98EfUUm86pDmQltT"
+                    src="/static/user.png"
                     alt="User avatar"
                   />
                   <AvatarFallback>U</AvatarFallback>
@@ -113,8 +114,8 @@ export function Navbar() {
               <DropdownMenuItem>
                 <Link href="/profile/notification">Notifications</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                
+              <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+                Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
