@@ -1,0 +1,54 @@
+version: 0.2
+
+env:
+  variables:
+    ENV_FILE: ".env"
+  secrets-manager:
+    DATABASE_URL: "freevibe/DATABASE_URL"
+    NEXTAUTH_SECRET: "freevibe/NEXTAUTH_SECRET"
+    NEXTAUTH_URL: "freevibe/NEXTAUTH_URL"
+    GOOGLE_CLIENT_ID: "freevibe/GOOGLE_CLIENT_ID"
+    GOOGLE_CLIENT_SECRET: "freevibe/GOOGLE_CLIENT_SECRET"
+
+phases:
+  install:
+    runtime-versions:
+      docker: 20
+    commands:
+      - echo "=== INSTALL PHASE ==="
+      - echo "Checking Docker version..."
+      - docker --version
+
+  pre_build:
+    commands:
+      - echo "=== PRE-BUILD: CLEAN OLD CONTAINERS & IMAGES ==="
+      - echo "Stopping and removing old containers..."
+      - docker ps -q --filter "name=petsos" | xargs -r docker stop || true
+      - docker ps -aq --filter "name=petsos" | xargs -r docker rm || true
+      - echo "Removing old images..."
+      - docker images -q --filter=reference='petsos-*' | xargs -r docker rmi -f || true
+
+  build:
+    commands:
+      - echo "=== BUILD PHASE: BUILD & DEPLOY CONTAINERS ==="
+      - echo "Loading environment variables from Secrets Manager..."
+      - export DATABASE_URL=$DATABASE_URL
+      - export NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+      - export NEXTAUTH_URL=$NEXTAUTH_URL
+      - export GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+      - export GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+      - echo "Building Docker containers..."
+      - docker compose build
+      - echo "Starting Docker containers..."
+      - docker compose up -d
+
+  post_build:
+    commands:
+      - echo "=== VERIFY DEPLOYMENT ==="
+      - docker ps
+      - echo "HAProxy + Next.js instances deployed successfully!"
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: yes
